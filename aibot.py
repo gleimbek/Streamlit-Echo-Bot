@@ -5,7 +5,7 @@ import time
 import requests
 import json
 
-def ai_ask(prompt, data=None, temperature=0.5, max_tokens=250, model="mistral-small-latest", api_key=R1NoJ9fphmYOJd2YSZuhbc3AyyhKKC6j, api_url="https://api.mistral.ai/v1/chat/completions"):
+def ai_ask(prompt, data=None, temperature=0.5, max_tokens=250, model="mistral-small-latest", api_key=None, api_url="https://api.mistral.ai/v1/chat/completions"):
     if api_key is None or api_url is None:
         if "idToken" in globals():
             api_key = globals()["idToken"]
