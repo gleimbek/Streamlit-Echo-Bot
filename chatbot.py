@@ -15,6 +15,7 @@ def response_generator():
         yield word + " "
         time.sleep(0.05)
 
+
 st.title("Simple chat")
 
 # Initialize chat history
