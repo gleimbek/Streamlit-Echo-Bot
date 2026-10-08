@@ -51,7 +51,7 @@ def ai_ask(prompt, data=None, temperature=0.5, max_tokens=250, model="mistral-3b
         content = response_data["choices"][0]["message"]["content"]
         return content
     except Exception as e:
-        return f"Error: {str(e)}"
+         return f"Error: {str(e)} | {response.text}"
 
 
 def response_generator():
