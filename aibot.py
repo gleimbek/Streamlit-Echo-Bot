@@ -37,8 +37,12 @@ def ai_ask(prompt, data=None, temperature=0.5, max_tokens=250, model="mistral-sm
         "Accept": "application/json"
     }
 
-    # Make the API request
-    response = requests.post(api_url, headers=headers, json=payload)
+    # Make the API request (retry up to 3 times if the rate limit is hit)
+    for attempt in range(3):
+        response = requests.post(api_url, headers=headers, json=payload)
+        if response.status_code != 429:
+            break
+        time.sleep(2 * (attempt + 1))
     if response.status_code == 429:
         return f"Rate limit (429): {response.text}"
     try:
@@ -48,7 +52,6 @@ def ai_ask(prompt, data=None, temperature=0.5, max_tokens=250, model="mistral-sm
         return content
     except Exception as e:
         return f"Error: {str(e)}"
-
 
 
 def response_generator():
@@ -70,7 +73,6 @@ if "messages" not in st.session_state:
 with st.chat_message("assistant"):
     st.image("Demographic_Dashboard.png", caption="CIT 144 – Demographics Data Visualization")
 
-
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
@@ -84,10 +86,8 @@ if prompt := st.chat_input("What is up?"):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-
-# Display assistant response in chat message container
-with st.chat_message("assistant"):
-    response = st.write_stream(response_generator())
-
-# Add assistant response to chat history
-st.session_state.messages.append({"role": "assistant", "content": response})
+    # Display assistant response in chat message container
+    with st.chat_message("assistant"):
+        response = st.write_stream(response_generator())
+    # Add assistant response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": response})
